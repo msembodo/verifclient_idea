@@ -1,0 +1,37 @@
+v0.0.7:
+Author: Martyono Sembodo
+* Support for link check in 3G
+* Clean application exit by shutting down verification server
+
+v0.0.6:
+Author: Martyono Sembodo
+* Adding toolbar and keyboard shortcuts
+* Search and highlight in error report
+
+v0.0.5:
+Author: Martyono Sembodo
+* Hotfix for issue when selecting USIM AID other ADF cannot be selected
+* USIM AID field is disabled for now
+
+v0.0.4:
+Author: Martyono Sembodo
+* Added feature for USIM in 3G mode
+* Support for SIMBIOS CTD
+
+v0.0.3:
+Author: Martyono Sembodo
+* Added feature for importing SIM Alliance SIMPML & ex-Morpho technical report
+* Minor UI refinements
+* Quick user guide
+
+v0.0.2:
+Author: Martyono Sembodo
+* Show warning message if no CSV is selected
+* Custom APDU for security codes verification
+
+v0.0.1:
+Author: Martyono Sembodo
+* Create UI - view and controllers
+* Define connectivity functions to verif server
+* Define request-response mechanism
+* Define model for config.xml
