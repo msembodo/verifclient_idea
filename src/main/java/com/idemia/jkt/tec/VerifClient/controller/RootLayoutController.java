@@ -515,7 +515,7 @@ public class RootLayoutController {
 							
 							// display error report
 							vClient.getWebErrorReport().setDisable(false);
-							vClient.getWebErrorReport().setZoom(1.25);
+//							vClient.getWebErrorReport().setZoom(1.25);
 							WebEngine webEngine = vClient.getWebErrorReport().getEngine();
 							String errorReportPath = selectedCsv.getParent();
 							String errorReportFileName = selectedCsv.getName().substring(0, selectedCsv.getName().indexOf(".")) + "_error.html";
@@ -527,7 +527,7 @@ public class RootLayoutController {
 							} catch (MalformedURLException e) {
 								e.printStackTrace();
 							}
-							
+
 							// enable search box and define handler
 							vClient.getToolbarErrorReport().setDisable(false);
 							previousSearch = "";
