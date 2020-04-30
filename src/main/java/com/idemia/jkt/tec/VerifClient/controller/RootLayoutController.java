@@ -13,8 +13,11 @@ import javax.smartcardio.CardException;
 import javax.smartcardio.CardTerminal;
 import javax.smartcardio.TerminalFactory;
 
+import com.idemia.jkt.tec.VerifClient.model.CreateScriptConfig;
 import com.idemia.jkt.tec.VerifClient.response.ConverterResponse;
+import com.idemia.jkt.tec.VerifClient.service.CreateScriptService;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import org.apache.log4j.Logger;
 import org.controlsfx.control.Notifications;
 import org.controlsfx.control.StatusBar;
@@ -51,6 +54,7 @@ public class RootLayoutController {
 	
 	private VerifClientApplication application;
 	private VerifConfig verifConfig;
+	private CreateScriptConfig scriptConfig;
 	private TerminalFactory terminalFactory;
 	private VerificationResponse verificationResponse;
 	private ConverterResponse converterResponse;
@@ -58,6 +62,8 @@ public class RootLayoutController {
 	
 	@Autowired
 	private VerifConfigService verifConfigService;
+	@Autowired
+	private CreateScriptService scriptService;
 	
 	@Autowired
 	private VerifClientController vClient;
@@ -86,6 +92,8 @@ public class RootLayoutController {
 	@FXML
 	private MenuItem menuCustomApdu;
 	@FXML
+	private MenuItem menuCreateScript;
+	@FXML
 	private MenuItem menuRun;
 	@FXML
 	private MenuItem menuUserGuide;
@@ -102,6 +110,7 @@ public class RootLayoutController {
 	private Button btnSelectReader;
 	private Button btnEditLiterals;
 	private Button btnCustomApdu;
+	private Button btnCreateScript;
 	private Button btnRun;
 	
 	private StatusBar appStatusBar;
@@ -134,6 +143,7 @@ public class RootLayoutController {
 		menuEditLiterals.setGraphic(new FontAwesomeIconView(FontAwesomeIcon.FONT));
 		menuEditLiterals.setAccelerator(new KeyCodeCombination(KeyCode.L, KeyCombination.CONTROL_DOWN));
 		menuCustomApdu.setGraphic(new MaterialDesignIconView(MaterialDesignIcon.SETTINGS));
+		menuCreateScript.setGraphic(new MaterialDesignIconView(MaterialDesignIcon.REPLAY));
 		menuRun.setGraphic(new FontAwesomeIconView(FontAwesomeIcon.PLAY));
 		menuRun.setAccelerator(new KeyCodeCombination(KeyCode.F5));
 		menuUserGuide.setGraphic(new MaterialDesignIconView(MaterialDesignIcon.HELP));
@@ -160,6 +170,9 @@ public class RootLayoutController {
 		btnCustomApdu = new Button("", new MaterialDesignIconView(MaterialDesignIcon.SETTINGS));
 		btnCustomApdu.setTooltip(new Tooltip("Custom APDU for Security Codes Verification"));
 		btnCustomApdu.setOnAction((event) -> { handleMenuCustomApdu(); });
+		btnCreateScript = new Button("", new MaterialDesignIconView(MaterialDesignIcon.REPLAY));
+		btnCreateScript.setTooltip(new Tooltip("Generate non-regression script"));
+		btnCreateScript.setOnAction((event) -> { handleMenuGenerateScript(); });
 		btnRun = new Button("", new FontAwesomeIconView(FontAwesomeIcon.PLAY));
 		btnRun.setTooltip(new Tooltip("Run Verification"));
 		btnRun.setOnAction((event) -> { handleMenuRun(); });
@@ -172,6 +185,7 @@ public class RootLayoutController {
 		toolBar.getItems().add(btnCustomApdu);
 		toolBar.getItems().add(btnSaveConfiguration);
 		toolBar.getItems().add(btnRun);
+		toolBar.getItems().add(btnCreateScript);
 		toolBar.getItems().add(new Separator());
 		toolBar.getItems().add(btnSelectReader);
 		
@@ -180,6 +194,9 @@ public class RootLayoutController {
 		
 		// get verification configuration from config.xml or by default values
 		verifConfig = verifConfigService.initConfig();
+
+		// get configuration from script-settings.json or by default values
+		scriptConfig = scriptService.initConfig();
 		
 		terminalFactory = TerminalFactory.getDefault();
 		try {
@@ -438,7 +455,12 @@ public class RootLayoutController {
 	private void handleMenuCustomApdu() {
 		application.showCustomApdu();
 	}
-	
+
+	@FXML
+	private void handleMenuGenerateScript() {
+		application.showGenerateScript();
+	}
+
 	@FXML
 	private void handleMenuUserGuide() {
 		application.showUserGuide();
@@ -599,6 +621,10 @@ public class RootLayoutController {
 
 	public VerifConfig getVerifConfig() {
 		return verifConfig;
+	}
+
+	public CreateScriptConfig getScriptConfig() {
+		return scriptConfig;
 	}
 
 	public StatusBar getAppStatusBar() {

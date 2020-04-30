@@ -2,18 +2,11 @@ package com.idemia.jkt.tec.VerifClient;
 
 import java.io.IOException;
 
+import com.idemia.jkt.tec.VerifClient.controller.*;
 import org.apache.log4j.Logger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
-
-import com.idemia.jkt.tec.VerifClient.controller.AboutController;
-import com.idemia.jkt.tec.VerifClient.controller.CustomAPDUController;
-import com.idemia.jkt.tec.VerifClient.controller.EditLiteralsController;
-import com.idemia.jkt.tec.VerifClient.controller.RootLayoutController;
-import com.idemia.jkt.tec.VerifClient.controller.SelectReaderController;
-import com.idemia.jkt.tec.VerifClient.controller.UserGuideController;
-import com.idemia.jkt.tec.VerifClient.controller.VerifClientController;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -36,6 +29,7 @@ public class VerifClientApplication extends Application {
 	private Stage editLiteralsDialogStage;
 	private Stage selectReaderDialogStage;
 	private Stage customApduDialogStage;
+	private Stage createScriptStage;
 	private Stage userGuideStage;
 	private Stage aboutDialogStage;
 
@@ -66,7 +60,7 @@ public class VerifClientApplication extends Application {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/RootLayout.fxml"));
 			loader.setControllerFactory(springContext::getBean);
-			rootLayout = (BorderPane) loader.load();
+			rootLayout = loader.load();
 						
 			// give controller access to main app
 			RootLayoutController controller = loader.getController();
@@ -89,7 +83,7 @@ public class VerifClientApplication extends Application {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/VerifClient.fxml"));
 			loader.setControllerFactory(springContext::getBean);
-			AnchorPane verifClient = (AnchorPane) loader.load();
+			AnchorPane verifClient = loader.load();
 			
 			rootLayout.setCenter(verifClient);
 			
@@ -106,7 +100,7 @@ public class VerifClientApplication extends Application {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/EditLiterals.fxml"));
 			loader.setControllerFactory(springContext::getBean);
-			AnchorPane editLiterals = (AnchorPane) loader.load();
+			AnchorPane editLiterals = loader.load();
 			
 			// give controller access to main app
 			EditLiteralsController controller = loader.getController();
@@ -115,6 +109,7 @@ public class VerifClientApplication extends Application {
 			// create dialog
 			editLiteralsDialogStage = new Stage();
 			editLiteralsDialogStage.setTitle("Edit Literals");
+			editLiteralsDialogStage.getIcons().add(new Image(VerifClientApplication.class.getResourceAsStream("/outline_format_shapes_white_18dp.png")));
 			editLiteralsDialogStage.setResizable(false);
 			editLiteralsDialogStage.initModality(Modality.WINDOW_MODAL);
 			editLiteralsDialogStage.initOwner(primaryStage);
@@ -132,7 +127,7 @@ public class VerifClientApplication extends Application {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/SelectReader.fxml"));
 			loader.setControllerFactory(springContext::getBean);
-			AnchorPane selectReader = (AnchorPane) loader.load();
+			AnchorPane selectReader = loader.load();
 			
 			// give controller access to main app
 			SelectReaderController controller = loader.getController();
@@ -141,6 +136,7 @@ public class VerifClientApplication extends Application {
 			// create dialog
 			selectReaderDialogStage = new Stage();
 			selectReaderDialogStage.setTitle("Select Reader");
+			selectReaderDialogStage.getIcons().add(new Image(VerifClientApplication.class.getResourceAsStream("/outline_usb_white_18dp.png")));
 			selectReaderDialogStage.setResizable(false);
 			selectReaderDialogStage.initModality(Modality.WINDOW_MODAL);
 			selectReaderDialogStage.initOwner(primaryStage);
@@ -158,7 +154,7 @@ public class VerifClientApplication extends Application {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/CustomAPDU.fxml"));
 			loader.setControllerFactory(springContext::getBean);
-			AnchorPane customApdu = (AnchorPane) loader.load();
+			AnchorPane customApdu = loader.load();
 			
 			// give controller access to main app
 			CustomAPDUController controller = loader.getController();
@@ -167,6 +163,7 @@ public class VerifClientApplication extends Application {
 			// create dialog
 			customApduDialogStage = new Stage();
 			customApduDialogStage.setTitle("Custom APDU");
+			customApduDialogStage.getIcons().add(new Image(VerifClientApplication.class.getResourceAsStream("/outline_settings_white_18dp.png")));
 			customApduDialogStage.setResizable(false);
 			customApduDialogStage.initModality(Modality.WINDOW_MODAL);
 			customApduDialogStage.initOwner(primaryStage);
@@ -179,12 +176,39 @@ public class VerifClientApplication extends Application {
 			e.printStackTrace();
 		}
 	}
+
+	public void showGenerateScript() {
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/CreateScript.fxml"));
+			loader.setControllerFactory(springContext::getBean);
+			AnchorPane createScript = loader.load();
+
+			// give controller access to main app
+			CreateScriptController controller = loader.getController();
+			controller.setMainApp(this);
+
+			// create dialog
+			createScriptStage = new Stage();
+			createScriptStage.setTitle("Generate non-regression script");
+			createScriptStage.getIcons().add(new Image(VerifClientApplication.class.getResourceAsStream("/outline_notes_white_18dp.png")));
+			createScriptStage.setResizable(false);
+			createScriptStage.initModality(Modality.WINDOW_MODAL);
+			createScriptStage.initOwner(primaryStage);
+			Scene scene = new Scene(createScript);
+			createScriptStage.setScene(scene);
+
+			createScriptStage.showAndWait();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 	public void showUserGuide() {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/UserGuide.fxml"));
 			loader.setControllerFactory(springContext::getBean);
-			AnchorPane userGuide = (AnchorPane) loader.load();
+			AnchorPane userGuide = loader.load();
 			
 			// give controller access to main app
 			UserGuideController controller = loader.getController();
@@ -193,6 +217,7 @@ public class VerifClientApplication extends Application {
 			// create dialog
 			userGuideStage = new Stage();
 			userGuideStage.setTitle("User Guide");
+			userGuideStage.getIcons().add(new Image(VerifClientApplication.class.getResourceAsStream("/outline_menu_book_white_18dp.png")));
 			userGuideStage.initModality(Modality.WINDOW_MODAL);
 			userGuideStage.initOwner(primaryStage);
 			Scene scene = new Scene(userGuide);
@@ -209,7 +234,7 @@ public class VerifClientApplication extends Application {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/About.fxml"));
 			loader.setControllerFactory(springContext::getBean);
-			AnchorPane about = (AnchorPane) loader.load();
+			AnchorPane about = loader.load();
 			
 			// give controller access to main app
 			AboutController controller = loader.getController();
