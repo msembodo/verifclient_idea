@@ -1,16 +1,21 @@
 package com.idemia.jkt.tec.VerifClient.controller;
 
 import com.idemia.jkt.tec.VerifClient.VerifClientApplication;
+import com.idemia.jkt.tec.VerifClient.response.CreateScriptResponse;
 import com.idemia.jkt.tec.VerifClient.service.CreateScriptService;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import org.apache.log4j.Logger;
 import org.controlsfx.control.MaskerPane;
+import org.controlsfx.control.Notifications;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +27,7 @@ public class CreateScriptController {
     static Logger logger = Logger.getLogger(CreateScriptController.class.getName());
 
     private VerifClientApplication application;
+    private CreateScriptResponse scriptResponse;
 
     @Autowired
     private RootLayoutController root;
@@ -124,11 +130,87 @@ public class CreateScriptController {
     @FXML
     public void handleButtonGenerateLight() {
         saveSettings();
+        logger.info(root.getScriptConfig().toJson());
+        maskerPane.setText("Scanning light mode..");
+        maskerPane.setVisible(true);
+        // use threads for asynchronous process
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                scriptResponse = scriptService.runScanner(true);
+                if (scriptResponse.isGenerationSuccess())
+                    logger.info(scriptResponse.toJson());
+                else
+                    logger.error(scriptResponse.toJson());
+                return null;
+            }
+            @Override
+            protected void succeeded() {
+                super.succeeded();
+                maskerPane.setVisible(false);
+                root.getAppStatusBar().setText(scriptResponse.getMessage()); // update status bar
+                if (scriptResponse.isGenerationSuccess()) {
+                    Notifications.create().title("Card Scanner").text("Light scan complete.").showInformation();
+                    logger.info(scriptResponse.getMessage());
+                } else {
+                    Notifications.create().title("Card Scanner").text("Light scan failed.").showError();
+                    logger.error(scriptResponse.getMessage());
+                    // show alert
+                    Alert scanAlert = new Alert(Alert.AlertType.ERROR);
+                    scanAlert.initModality(Modality.APPLICATION_MODAL);
+                    scanAlert.initOwner(application.getCreateScriptStage());
+                    scanAlert.setTitle("CardScanner error");
+                    scanAlert.setHeaderText("Failed to perform light scan");
+                    scanAlert.setContentText(scriptResponse.getMessage());
+                    scanAlert.showAndWait();
+                }
+            }
+        };
+        Thread lightScanThread = new Thread(task);
+        lightScanThread.start();
     }
 
     @FXML
     public void handleButtonGenerateFull() {
         saveSettings();
+        logger.info(root.getScriptConfig().toJson());
+        maskerPane.setText("Scanning full mode..");
+        maskerPane.setVisible(true);
+        // use threads for asynchronous process
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                scriptResponse = scriptService.runScanner(false);
+                if (scriptResponse.isGenerationSuccess())
+                    logger.info(scriptResponse.toJson());
+                else
+                    logger.error(scriptResponse.toJson());
+                return null;
+            }
+            @Override
+            protected void succeeded() {
+                super.succeeded();
+                maskerPane.setVisible(false);
+                root.getAppStatusBar().setText(scriptResponse.getMessage()); // update status bar
+                if (scriptResponse.isGenerationSuccess()) {
+                    Notifications.create().title("Card Scanner").text("Full scan complete.").showInformation();
+                    logger.info(scriptResponse.getMessage());
+                } else {
+                    Notifications.create().title("Card Scanner").text("Full scan failed.").showError();
+                    logger.error(scriptResponse.getMessage());
+                    // show alert
+                    Alert scanAlert = new Alert(Alert.AlertType.ERROR);
+                    scanAlert.initModality(Modality.APPLICATION_MODAL);
+                    scanAlert.initOwner(application.getCreateScriptStage());
+                    scanAlert.setTitle("CardScanner error");
+                    scanAlert.setHeaderText("Failed to perform full scan");
+                    scanAlert.setContentText(scriptResponse.getMessage());
+                    scanAlert.showAndWait();
+                }
+            }
+        };
+        Thread fullScanThread = new Thread(task);
+        fullScanThread.start();
     }
 
     private void saveSettings() {

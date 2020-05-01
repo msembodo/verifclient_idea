@@ -3,6 +3,7 @@ package com.idemia.jkt.tec.VerifClient;
 import java.io.IOException;
 
 import com.idemia.jkt.tec.VerifClient.controller.*;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -269,10 +270,13 @@ public class VerifClientApplication extends Application {
 	public Stage getSelectReaderDialogStage() {
 		return selectReaderDialogStage;
 	}
-	
 
 	public Stage getCustomApduDialogStage() {
 		return customApduDialogStage;
+	}
+
+	public Stage getCreateScriptStage() {
+		return createScriptStage;
 	}
 
 	public Stage getAboutDialogStage() {

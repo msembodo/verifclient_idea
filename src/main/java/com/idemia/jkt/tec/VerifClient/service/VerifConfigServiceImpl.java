@@ -185,20 +185,16 @@ public class VerifConfigServiceImpl implements VerifConfigService {
 		if (serverIsRunning(statusUri)) {
 			String httpGetResult = doGet(uri);
 			Gson gson = new Gson();
-			VerificationResponse verificationResponse = gson.fromJson(httpGetResult, VerificationResponse.class);
-			return verificationResponse;
-			
+			return gson.fromJson(httpGetResult, VerificationResponse.class);
 		} else
 			return new VerificationResponse(false, exceptionMessage);
-		
 	}
 	
 	@Override
 	public void shutdownVerifServer() throws Exception {
 		String uri = SERVER_URL + "killVerifServer";
-		if (serverIsRunning(statusUri)) {
+		if (serverIsRunning(statusUri))
 			doGet(uri);
-		}
 	}
 
 	@Override
@@ -208,9 +204,7 @@ public class VerifConfigServiceImpl implements VerifConfigService {
 		if (serverIsRunning(statusUri)) {
 			String httpPostResult = postToConvert(uri, docPath);
 			Gson gson = new Gson();
-			ConverterResponse converterResponse = gson.fromJson(httpPostResult, ConverterResponse.class);
-			return converterResponse;
-
+			return gson.fromJson(httpPostResult, ConverterResponse.class);
 		} else
 			return new ConverterResponse(false, "", exceptionMessage);
 	}
@@ -222,9 +216,7 @@ public class VerifConfigServiceImpl implements VerifConfigService {
 		if (serverIsRunning(statusUri)) {
 			String httpPostResult = postToConvert(uri, docPath);
 			Gson gson = new Gson();
-			ConverterResponse converterResponse = gson.fromJson(httpPostResult, ConverterResponse.class);
-			return converterResponse;
-
+			return gson.fromJson(httpPostResult, ConverterResponse.class);
 		} else
 			return new ConverterResponse(false, "", exceptionMessage);
 	}
@@ -240,7 +232,7 @@ public class VerifConfigServiceImpl implements VerifConfigService {
 		
 		BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
 		StringBuffer result = new StringBuffer();
-		String line = "";
+		String line;
 		while ((line = rd.readLine()) != null)
 			result.append(line);
 		
@@ -267,7 +259,7 @@ public class VerifConfigServiceImpl implements VerifConfigService {
 
 		BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
 		StringBuffer result = new StringBuffer();
-		String line = "";
+		String line;
 		while ((line = rd.readLine()) != null)
 			result.append(line);
 
@@ -280,12 +272,7 @@ public class VerifConfigServiceImpl implements VerifConfigService {
 			HttpURLConnection connection = (HttpURLConnection) serverUrl.openConnection();
 			connection.setRequestMethod("GET");
 			connection.connect();
-			
-			if (connection.getResponseCode() == 200)
-				return true;
-			else
-				return false;
-			
+			return connection.getResponseCode() == 200;
 		} catch (Exception e) {
 			exceptionMessage = e.getMessage();
 			return false;

@@ -5,9 +5,8 @@ import com.idemia.jkt.tec.VerifClient.response.CreateScriptResponse;
 
 public interface CreateScriptService {
 
-    public CreateScriptConfig initConfig();
-    public void saveConfig(CreateScriptConfig scriptConfig);
-    public CreateScriptResponse generateLight() throws Exception;
-    public CreateScriptResponse generateFull() throws Exception;
+    CreateScriptConfig initConfig();
+    void saveConfig(CreateScriptConfig scriptConfig);
+    CreateScriptResponse runScanner(boolean light) throws Exception;
 
 }

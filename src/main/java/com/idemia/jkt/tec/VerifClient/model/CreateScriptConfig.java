@@ -1,5 +1,7 @@
 package com.idemia.jkt.tec.VerifClient.model;
 
+import com.google.gson.Gson;
+
 public class CreateScriptConfig {
 
     private boolean useSaveFS;
@@ -36,6 +38,11 @@ public class CreateScriptConfig {
 
     public void setDestinationFolder(String destinationFolder) {
         this.destinationFolder = destinationFolder;
+    }
+
+    // for debugging
+    public String toJson() {
+        return new Gson().toJson(this);
     }
 
 }

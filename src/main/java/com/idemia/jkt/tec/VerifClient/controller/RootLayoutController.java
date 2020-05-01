@@ -17,7 +17,6 @@ import com.idemia.jkt.tec.VerifClient.model.CreateScriptConfig;
 import com.idemia.jkt.tec.VerifClient.response.ConverterResponse;
 import com.idemia.jkt.tec.VerifClient.service.CreateScriptService;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import org.apache.log4j.Logger;
 import org.controlsfx.control.Notifications;
 import org.controlsfx.control.StatusBar;
