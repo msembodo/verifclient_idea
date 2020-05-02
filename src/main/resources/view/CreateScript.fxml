@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="148.0" prefWidth="781.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.idemia.jkt.tec.VerifClient.controller.CreateScriptController">
@@ -28,17 +27,12 @@
                                 <TextField fx:id="txtDestinationFolder" focusTraversable="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                 <Button fx:id="btnBrowseFileSystemXml" mnemonicParsing="false" onAction="#handleButtonBrowseFileSystemXml" text="Browse" GridPane.columnIndex="2" />
                                 <Button mnemonicParsing="false" onAction="#handleButtonBrowseDestinationFolder" text="Browse" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                                <CheckBox fx:id="chkUseSaveFs" focusTraversable="false" mnemonicParsing="false" text="Use MCC 'SaveFS'" GridPane.columnIndex="3" />
+                                <CheckBox fx:id="chkUseSaveFs" mnemonicParsing="false" text="Use MCC 'SaveFS'" GridPane.columnIndex="3" />
                             </children>
                         </GridPane>
                         <Button layoutX="20.0" layoutY="103.0" minWidth="120.0" mnemonicParsing="false" onAction="#handleButtonGenerateLight" text="Generate light" AnchorPane.bottomAnchor="12.0" />
                         <Button layoutX="144.0" layoutY="103.0" minWidth="120.0" mnemonicParsing="false" onAction="#handleButtonGenerateFull" text="Generate full" AnchorPane.bottomAnchor="12.0" />
                         <Separator layoutX="20.0" layoutY="90.0" prefWidth="200.0" AnchorPane.bottomAnchor="45.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="12.0" AnchorPane.topAnchor="90.0" />
-                        <ImageView fitHeight="130.0" fitWidth="320.0" layoutX="447.0" layoutY="97.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="12.0">
-                            <image>
-                                <Image url="@../powered_by_cardscanner.png" />
-                            </image>
-                        </ImageView>
                     </children>
                 </AnchorPane>
             </children>
