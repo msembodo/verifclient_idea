@@ -5,6 +5,7 @@ import com.idemia.jkt.tec.VerifClient.response.CreateScriptResponse;
 import com.idemia.jkt.tec.VerifClient.service.CreateScriptService;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -213,13 +214,17 @@ public class CreateScriptController {
         fullScanThread.start();
     }
 
+    @FXML
+    public void handleButtonOptions() {
+        application.showScanOptions();
+    }
+
     private void saveSettings() {
         // update script configuration instance
         root.getScriptConfig().setUseSaveFS(chkUseSaveFs.isSelected());
         root.getScriptConfig().setFileSystemXml(txtFileSystemXml.getText());
         root.getScriptConfig().setDestinationFolder(txtDestinationFolder.getText());
 
-        scriptService.saveConfig(root.getScriptConfig()); // persist to json file
         root.handleMenuSaveConfiguration(); // take all other options into account
     }
 

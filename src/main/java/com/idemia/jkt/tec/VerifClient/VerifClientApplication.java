@@ -3,6 +3,7 @@ package com.idemia.jkt.tec.VerifClient;
 import java.io.IOException;
 
 import com.idemia.jkt.tec.VerifClient.controller.*;
+import javafx.fxml.FXML;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.boot.SpringApplication;
@@ -31,6 +32,7 @@ public class VerifClientApplication extends Application {
 	private Stage selectReaderDialogStage;
 	private Stage customApduDialogStage;
 	private Stage createScriptStage;
+	private Stage scanOptionStage;
 	private Stage userGuideStage;
 	private Stage aboutDialogStage;
 
@@ -204,6 +206,31 @@ public class VerifClientApplication extends Application {
 			e.printStackTrace();
 		}
 	}
+
+	public void showScanOptions() {
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/ScanOptions.fxml"));
+			loader.setControllerFactory(springContext::getBean);
+			AnchorPane scanOptions = loader.load();
+
+			ScanOptionsController controller = loader.getController();
+			controller.setMainApp(this);
+
+			scanOptionStage = new Stage();
+			scanOptionStage.setTitle("Scan options");
+			scanOptionStage.getIcons().add(new Image(VerifClientApplication.class.getResourceAsStream("/outline_settings_white_18dp.png")));
+			scanOptionStage.setResizable(false);
+			scanOptionStage.initModality(Modality.WINDOW_MODAL);
+			scanOptionStage.initOwner(createScriptStage);
+			Scene scene = new Scene(scanOptions);
+			scanOptionStage.setScene(scene);
+
+			scanOptionStage.showAndWait();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 	public void showUserGuide() {
 		try {
@@ -277,6 +304,10 @@ public class VerifClientApplication extends Application {
 
 	public Stage getCreateScriptStage() {
 		return createScriptStage;
+	}
+
+	public Stage getScanOptionStage() {
+		return scanOptionStage;
 	}
 
 	public Stage getAboutDialogStage() {

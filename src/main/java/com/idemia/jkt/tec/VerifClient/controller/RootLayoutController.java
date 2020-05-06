@@ -438,6 +438,7 @@ public class RootLayoutController {
 	public void handleMenuSaveConfiguration() {
 		vClient.saveOptionsAndCodes();
 		verifConfigService.saveConfig(verifConfig);
+		scriptService.saveConfig(scriptConfig); // persist scan settings to json
 	}
 	
 	@FXML

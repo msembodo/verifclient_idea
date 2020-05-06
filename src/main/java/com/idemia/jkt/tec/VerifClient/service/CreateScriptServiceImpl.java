@@ -11,6 +11,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
+import javax.xml.bind.annotation.XmlType;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -43,11 +44,14 @@ public class CreateScriptServiceImpl implements CreateScriptService {
             // constants for default values
             String SAVEFS_PATH_DEFAULT = "OFRSAIP_ESv1_2_2__DF.xml";
             String PROJECT_PATH_DEFAULT = "C:\\";
+            String DF_LIST = "3F00;7F10;5F3A;7F20;7FF0;5F3B";
             // initialize default values and save settings
             CreateScriptConfig defaultSettings = new CreateScriptConfig();
             defaultSettings.setUseSaveFS(false);
             defaultSettings.setFileSystemXml(SAVEFS_PATH_DEFAULT);
             defaultSettings.setDestinationFolder(PROJECT_PATH_DEFAULT);
+            defaultSettings.setUseVarChanger(false);
+            defaultSettings.setDfList(DF_LIST);
             ObjectMapper mapper = new ObjectMapper();
             try {
                 mapper.writerWithDefaultPrettyPrinter().writeValue(scriptSettingsFile, defaultSettings);
