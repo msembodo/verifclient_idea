@@ -2,22 +2,26 @@ package com.idemia.jkt.tec.VerifClient.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import com.idemia.jkt.tec.VerifClient.controller.RootLayoutController;
 import com.idemia.jkt.tec.VerifClient.model.CreateScriptConfig;
 import com.idemia.jkt.tec.VerifClient.response.CreateScriptResponse;
+import com.idemia.jkt.tec.VerifClient.response.VarChangerResponse;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.xml.bind.annotation.XmlType;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class CreateScriptServiceImpl implements CreateScriptService {
@@ -27,6 +31,11 @@ public class CreateScriptServiceImpl implements CreateScriptService {
     private File scriptSettingsFile;
 
     private String exceptionMessage;
+
+    private int exitVal;
+
+    @Autowired
+    private RootLayoutController root;
 
     @Override
     public CreateScriptConfig initConfig() {
@@ -93,6 +102,27 @@ public class CreateScriptServiceImpl implements CreateScriptService {
             return new CreateScriptResponse(false, exceptionMessage);
     }
 
+    @Override
+    public VarChangerResponse runVarChanger(boolean light) {
+        // syntax: changer <script> <variables> <dflist> [<mode>]
+        String varChangerExe = "changer_2.exe";
+        String script = getScriptName(light);
+        String variables = root.getVerifConfig().getPathToVariablesTxt();
+        String dfList = root.getScriptConfig().getDfList().replace(";", ""); // filter semicolon
+        if (light)
+            runShellCommand(varChangerExe, script, variables, dfList, false);
+        else
+            runShellCommand(varChangerExe, script, variables, dfList, true);
+
+        // define possible error codes
+        if (exitVal == 0)
+            return new VarChangerResponse(true, "VarChanger - OK");
+        if (exitVal == 1)
+            return new VarChangerResponse(false, "Variables with same values are found");
+        else
+            return new VarChangerResponse(false, "(Error not defined)");
+    }
+
     private String doGet(String uri) throws Exception {
         HttpClient client = HttpClientBuilder.create().build();
         HttpGet request = new HttpGet(uri);
@@ -119,6 +149,45 @@ public class CreateScriptServiceImpl implements CreateScriptService {
         } catch (Exception e) {
             exceptionMessage = e.getMessage();
             return false;
+        }
+    }
+
+    private void launchProcess(List<String> cmdArray) throws IOException, InterruptedException {
+        ProcessBuilder processBuilder = new ProcessBuilder(cmdArray);
+        processBuilder.redirectErrorStream(true);
+        Process process = processBuilder.start();
+        exitVal = process.waitFor();
+    }
+
+    private void runShellCommand(String varChangerExe, String script, String variables, String dfList, boolean fullMode) {
+        List<String> cmdArray = new ArrayList<>();
+        cmdArray.add(varChangerExe);
+        cmdArray.add(script);
+        cmdArray.add(variables);
+        cmdArray.add(dfList);
+        if (fullMode)
+            cmdArray.add("full");
+        try {
+            launchProcess(cmdArray);
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String getScriptName(boolean lightMode) {
+        if (lightMode) {
+            if (root.getScriptConfig().isUseSaveFS()) {
+                String inputFile = root.getScriptConfig().getFileSystemXml();
+                return inputFile.substring(0, inputFile.length() - 4) + "__light.pcom";
+            } else
+                return "script__light.pcom";
+        }
+        else {
+            if (root.getScriptConfig().isUseSaveFS()) {
+                String inputFile = root.getScriptConfig().getFileSystemXml();
+                return inputFile.substring(0, inputFile.length() - 4) + "__full.pcom";
+            } else
+                return "script__full.pcom";
         }
     }
 

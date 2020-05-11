@@ -2,6 +2,7 @@ package com.idemia.jkt.tec.VerifClient.controller;
 
 import com.idemia.jkt.tec.VerifClient.VerifClientApplication;
 import com.idemia.jkt.tec.VerifClient.response.CreateScriptResponse;
+import com.idemia.jkt.tec.VerifClient.response.VarChangerResponse;
 import com.idemia.jkt.tec.VerifClient.service.CreateScriptService;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -20,7 +21,9 @@ import org.controlsfx.control.Notifications;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class CreateScriptController {
@@ -153,6 +156,26 @@ public class CreateScriptController {
                 if (scriptResponse.isGenerationSuccess()) {
                     Notifications.create().title("Card Scanner").text("Light scan complete.").showInformation();
                     logger.info(scriptResponse.getMessage());
+
+                    if (root.getScriptConfig().isUseVarChanger()) {
+                        // execute var changer
+                        VarChangerResponse changerResponse = scriptService.runVarChanger(true);
+                        if (!changerResponse.isChangeSuccess()) {
+                            Alert changerAlert = new Alert(Alert.AlertType.WARNING);
+                            changerAlert.initModality(Modality.APPLICATION_MODAL);
+                            changerAlert.initOwner(application.getCreateScriptStage());
+                            changerAlert.setTitle("VarChanger");
+                            changerAlert.setHeaderText(changerResponse.getMessage());
+                            changerAlert.setContentText(getVarChangerLog());
+                            changerAlert.showAndWait();
+                        }
+
+                        if (changerResponse.isChangeSuccess()) {
+                            // TODO: move/copy output files to destination directory
+
+                            // TODO: create .LSC file
+                        }
+                    }
                 } else {
                     Notifications.create().title("Card Scanner").text("Light scan failed.").showError();
                     logger.error(scriptResponse.getMessage());
@@ -196,6 +219,24 @@ public class CreateScriptController {
                 if (scriptResponse.isGenerationSuccess()) {
                     Notifications.create().title("Card Scanner").text("Full scan complete.").showInformation();
                     logger.info(scriptResponse.getMessage());
+
+                    if (root.getScriptConfig().isUseVarChanger()) {
+                        // execute var changer
+                        VarChangerResponse changerResponse = scriptService.runVarChanger(false);
+                        if (!changerResponse.isChangeSuccess()) {
+                            Alert changerAlert = new Alert(Alert.AlertType.WARNING);
+                            changerAlert.initModality(Modality.APPLICATION_MODAL);
+                            changerAlert.initOwner(application.getCreateScriptStage());
+                            changerAlert.setTitle("VarChanger warning");
+                            changerAlert.setHeaderText(changerResponse.getMessage());
+                            changerAlert.setContentText(getVarChangerLog());
+                            changerAlert.showAndWait();
+                        }
+
+                        if (changerResponse.isChangeSuccess()) {
+                            // TODO: move/copy output files to destination directory
+                        }
+                    }
                 } else {
                     Notifications.create().title("Card Scanner").text("Full scan failed.").showError();
                     logger.error(scriptResponse.getMessage());
@@ -226,6 +267,24 @@ public class CreateScriptController {
         root.getScriptConfig().setDestinationFolder(txtDestinationFolder.getText());
 
         root.handleMenuSaveConfiguration(); // take all other options into account
+    }
+
+    private String getVarChangerLog() {
+        List<String> records = new ArrayList<>();
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader("varchanger.log"));
+            String line;
+            while ((line = reader.readLine()) != null)
+                records.add(line);
+            reader.close();
+            StringBuilder logLines = new StringBuilder();
+            for (String logLine : records)
+                logLines.append(logLine).append("\n");
+            return logLines.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
 }
