@@ -6,7 +6,6 @@ import com.idemia.jkt.tec.VerifClient.response.VarChangerResponse;
 import com.idemia.jkt.tec.VerifClient.service.CreateScriptService;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -22,6 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -161,6 +162,7 @@ public class CreateScriptController {
                         // execute var changer
                         VarChangerResponse changerResponse = scriptService.runVarChanger(true);
                         if (!changerResponse.isChangeSuccess()) {
+                            logger.warn(changerResponse.getMessage());
                             Alert changerAlert = new Alert(Alert.AlertType.WARNING);
                             changerAlert.initModality(Modality.APPLICATION_MODAL);
                             changerAlert.initOwner(application.getCreateScriptStage());
@@ -171,9 +173,24 @@ public class CreateScriptController {
                         }
 
                         if (changerResponse.isChangeSuccess()) {
-                            // TODO: move/copy output files to destination directory
+                            logger.info(changerResponse.getMessage());
+                            // move/copy output files to destination directory
+                            File source = new File("[LIGHT]_FileVerif.txt");
+                            File dest = new File(scriptService.getScriptName(true));
+                            File lscFile = new File(scriptService.getLscScript()); // create .LSC file
+                            try {
+                                Files.copy(source.toPath(), dest.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                                Files.copy(source.toPath(), lscFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
 
-                            // TODO: create .LSC file
+                            // delete original output
+                            try {
+                                Files.deleteIfExists(source.toPath());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 } else {
@@ -224,6 +241,7 @@ public class CreateScriptController {
                         // execute var changer
                         VarChangerResponse changerResponse = scriptService.runVarChanger(false);
                         if (!changerResponse.isChangeSuccess()) {
+                            logger.warn(changerResponse.getMessage());
                             Alert changerAlert = new Alert(Alert.AlertType.WARNING);
                             changerAlert.initModality(Modality.APPLICATION_MODAL);
                             changerAlert.initOwner(application.getCreateScriptStage());
@@ -234,7 +252,22 @@ public class CreateScriptController {
                         }
 
                         if (changerResponse.isChangeSuccess()) {
-                            // TODO: move/copy output files to destination directory
+                            logger.info(changerResponse.getMessage());
+                            // move/copy output files to destination directory
+                            File source = new File("[FULL]_FileVerif.txt");
+                            File dest = new File(scriptService.getScriptName(false));
+                            try {
+                                Files.copy(source.toPath(), dest.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                            // delete original output
+                            try {
+                                Files.deleteIfExists(source.toPath());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 } else {
@@ -274,8 +307,11 @@ public class CreateScriptController {
         try {
             BufferedReader reader = new BufferedReader(new FileReader("varchanger.log"));
             String line;
-            while ((line = reader.readLine()) != null)
+            while ((line = reader.readLine()) != null) {
+                if (line.startsWith("=== varchanger log"))
+                    continue;
                 records.add(line);
+            }
             reader.close();
             StringBuilder logLines = new StringBuilder();
             for (String logLine : records)

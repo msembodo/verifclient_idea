@@ -174,7 +174,8 @@ public class CreateScriptServiceImpl implements CreateScriptService {
         }
     }
 
-    private String getScriptName(boolean lightMode) {
+    @Override
+    public String getScriptName(boolean lightMode) {
         if (lightMode) {
             if (root.getScriptConfig().isUseSaveFS()) {
                 String inputFile = root.getScriptConfig().getFileSystemXml();
@@ -189,6 +190,15 @@ public class CreateScriptServiceImpl implements CreateScriptService {
             } else
                 return "script__full.pcom";
         }
+    }
+
+    @Override
+    public String getLscScript() {
+        if (root.getScriptConfig().isUseSaveFS()) {
+            String inputFile = root.getScriptConfig().getFileSystemXml();
+            return inputFile.substring(0, inputFile.length() - 4) + ".lsc";
+        } else
+            return "script.lsc";
     }
 
 }

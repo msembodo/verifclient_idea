@@ -10,5 +10,7 @@ public interface CreateScriptService {
     void saveConfig(CreateScriptConfig scriptConfig);
     CreateScriptResponse runScanner(boolean light) throws Exception;
     VarChangerResponse runVarChanger(boolean light);
+    String getScriptName(boolean lightMode);
+    String getLscScript();
 
 }
