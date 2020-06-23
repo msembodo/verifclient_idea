@@ -1,3 +1,7 @@
+v0.1.1:
+Author: Martyono Sembodo
+* Automatic DF memory allocation size in generated non-regression script.
+
 v0.1.0:
 Author: Martyono Sembodo
 * Integrating VarChanger for replacing valuation data with 'Advance Save' variables.

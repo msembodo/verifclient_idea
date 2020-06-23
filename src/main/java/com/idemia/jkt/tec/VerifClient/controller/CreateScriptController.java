@@ -163,7 +163,7 @@ public class CreateScriptController {
                         VarChangerResponse changerResponse = scriptService.runVarChanger(true);
                         if (!changerResponse.isChangeSuccess()) {
                             logger.warn(changerResponse.getMessage());
-                            Alert changerAlert = new Alert(Alert.AlertType.WARNING);
+                            Alert changerAlert = new Alert(Alert.AlertType.ERROR);
                             changerAlert.initModality(Modality.APPLICATION_MODAL);
                             changerAlert.initOwner(application.getCreateScriptStage());
                             changerAlert.setTitle("VarChanger");
@@ -242,10 +242,10 @@ public class CreateScriptController {
                         VarChangerResponse changerResponse = scriptService.runVarChanger(false);
                         if (!changerResponse.isChangeSuccess()) {
                             logger.warn(changerResponse.getMessage());
-                            Alert changerAlert = new Alert(Alert.AlertType.WARNING);
+                            Alert changerAlert = new Alert(Alert.AlertType.ERROR);
                             changerAlert.initModality(Modality.APPLICATION_MODAL);
                             changerAlert.initOwner(application.getCreateScriptStage());
-                            changerAlert.setTitle("VarChanger warning");
+                            changerAlert.setTitle("VarChanger");
                             changerAlert.setHeaderText(changerResponse.getMessage());
                             changerAlert.setContentText(getVarChangerLog());
                             changerAlert.showAndWait();

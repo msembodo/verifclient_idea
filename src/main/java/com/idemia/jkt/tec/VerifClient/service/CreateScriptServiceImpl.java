@@ -20,6 +20,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -104,15 +108,33 @@ public class CreateScriptServiceImpl implements CreateScriptService {
 
     @Override
     public VarChangerResponse runVarChanger(boolean light) {
-        // syntax: changer <script> <variables> <dflist> [<mode>]
-        String varChangerExe = "changer_2.exe";
+        // syntax: changer <script> <variables> <savefs> [<mode>]
+        String varChangerExe = "changer_module_v3.exe";
         String script = getScriptName(light);
         String variables = root.getVerifConfig().getPathToVariablesTxt();
-        String dfList = root.getScriptConfig().getDfList().replace(";", ""); // filter semicolon
+
+        // due to some weird varchanger behavior we need to copy savefs xml to VC directory (and will delete again)
+        File savefs1 = new File(root.getScriptConfig().getFileSystemXml());
+        Path savefsPath = Paths.get(root.getScriptConfig().getFileSystemXml());
+        File savefs2 = new File(System.getProperty("user.dir") + "\\" + savefsPath.getFileName().toString());
+        try {
+            Files.copy(savefs1.toPath(), savefs2.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+//        String dfList = root.getScriptConfig().getDfList().replace(";", ""); // filter semicolon
         if (light)
-            runShellCommand(varChangerExe, script, variables, dfList, false);
+            runShellCommand(varChangerExe, script, variables, savefsPath.getFileName().toString(), false);
         else
-            runShellCommand(varChangerExe, script, variables, dfList, true);
+            runShellCommand(varChangerExe, script, variables, savefsPath.getFileName().toString(), true);
+
+        // delete savefs XML from VC directory
+        try {
+            Files.deleteIfExists(savefs2.toPath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         // define possible error codes
         if (exitVal == 0)
@@ -159,12 +181,12 @@ public class CreateScriptServiceImpl implements CreateScriptService {
         exitVal = process.waitFor();
     }
 
-    private void runShellCommand(String varChangerExe, String script, String variables, String dfList, boolean fullMode) {
+    private void runShellCommand(String varChangerExe, String script, String variables, String saveFsXml, boolean fullMode) {
         List<String> cmdArray = new ArrayList<>();
         cmdArray.add(varChangerExe);
         cmdArray.add(script);
         cmdArray.add(variables);
-        cmdArray.add(dfList);
+        cmdArray.add(saveFsXml);
         if (fullMode)
             cmdArray.add("full");
         try {

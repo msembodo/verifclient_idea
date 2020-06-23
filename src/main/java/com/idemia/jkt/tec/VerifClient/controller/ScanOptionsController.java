@@ -39,21 +39,22 @@ public class ScanOptionsController {
         lblDFList.setDisable(true);
         txtDFList.setDisable(true); // disabled by default
 
-        if (chkActivateVarChanger.isSelected()) {
-            lblDFList.setDisable(false);
-            txtDFList.setDisable(false);
-        }
-
-        chkActivateVarChanger.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if (chkActivateVarChanger.isSelected()) {
-                lblDFList.setDisable(false);
-                txtDFList.setDisable(false);
-            }
-            else {
-                lblDFList.setDisable(true);
-                txtDFList.setDisable(true);
-            }
-        });
+        // update on varchanger module v3 is to select DFs from SaveFS XML
+//        if (chkActivateVarChanger.isSelected()) {
+//            lblDFList.setDisable(false);
+//            txtDFList.setDisable(false);
+//        }
+//
+//        chkActivateVarChanger.selectedProperty().addListener((observable, oldValue, newValue) -> {
+//            if (chkActivateVarChanger.isSelected()) {
+//                lblDFList.setDisable(false);
+//                txtDFList.setDisable(false);
+//            }
+//            else {
+//                lblDFList.setDisable(true);
+//                txtDFList.setDisable(true);
+//            }
+//        });
     }
 
     @FXML
