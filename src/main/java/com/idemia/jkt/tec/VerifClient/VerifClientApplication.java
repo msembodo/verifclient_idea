@@ -250,6 +250,7 @@ public class VerifClientApplication extends Application {
 			userGuideStage.initOwner(primaryStage);
 			Scene scene = new Scene(userGuide);
 			userGuideStage.setScene(scene);
+			userGuideStage.setMaximized(true);
 			
 			userGuideStage.showAndWait();
 			

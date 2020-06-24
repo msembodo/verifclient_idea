@@ -73,6 +73,69 @@
 			</p>
 		  </div>
 		</div>
+		<div class="card bg-light mb-3">
+			<div class="card-body">
+				<h5 class="card-title">Create non-regression script</h5>
+				<h6 class="card-subtitle mb-2 text-muted">Card Scanner</h6>
+				<p class="card-text">
+					Card Scanner is intended to replace USIM Explorer for creating light & full script.<br>
+					<img src="ug/scanner01.jpg"><br>
+					<img src="ug/scanner02.jpg">
+				</p>
+				<p class="card-text">
+					Card Scanner will require input file system which is imported from SaveFS in MCC, which is then also used for looking up the file name or description:<br>
+					<img src="ug/scanner03.jpg">
+				</p>
+				<p class="card-text">
+					We need to modify the file system XML by replacing all AIDs (for application DFs such as USIM, ISIM, CSIM, etc.) with their corresponding DF IDs. This step is mandatory for the tool to work:<br>
+					<img src="ug/scanner04.jpg">
+				</p>
+				<p class="card-text">
+					The generated scripts will be located in the selected destination folder along with some card dump report in json and html format.
+				</p>
+				<h6 class="card-subtitle mb-2 text-muted">Variable Changer</h6>
+				<p class="card-text">
+					VarChanger will replace all identified valuations in the script with their corresponding variable names.
+				</p>
+				<table width="80%">
+					<tr>
+						<td><img src="ug/changer01.jpg"></td>
+						<td>Make sure to choose variables.txt file. This file is exported from MCC Advance Save, and should be the valuations that are used for personalizing the card.</td>
+					</tr>
+				</table>
+				<table width="80%">
+					<tr>
+						<td><img src="ug/changer02.jpg"></td>
+						<td>We now have <b>Options</b> button to allow some settings for card scanner.</td>
+					</tr>
+				</table>
+				<table width="80%">
+					<tr>
+						<td>Activate variable changer for replacing valuated contents with variable names</td>
+						<td><img src="ug/changer03.jpg"></td>
+					</tr>
+				</table>
+				<table width="80%">
+					<tr>
+						<td><img src="ug/changer04.jpg"></td>
+						<td>If, for example, you received warning like this; it means that the variables you created are not unique. Another fully randomized valuation set should be created.</td>
+					</tr>
+				</table>
+				<table width="80%">
+					<tr>
+						<td><img src="ug/changer05.jpg"></td>
+						<td>If everything have been configured correctly, you will have generated script with valuated EFs printed in their variable name.</td>
+					</tr>
+				</table>
+				<table width="80%">
+					<tr>
+						<td><img src="ug/changer06.jpg"></td>
+						<td>An LSC file will also be created, and this should be part of test result deliverables.
+						<br><br><u>Note:</u> LSC file will be used by preprod to automate their internal validation process.</td>
+					</tr>
+				</table>
+			</div>
+		</div>
 	</div>
 
     <!-- Optional JavaScript -->
