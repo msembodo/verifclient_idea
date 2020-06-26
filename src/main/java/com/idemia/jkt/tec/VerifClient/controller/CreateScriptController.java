@@ -6,14 +6,19 @@ import com.idemia.jkt.tec.VerifClient.response.VarChangerResponse;
 import com.idemia.jkt.tec.VerifClient.service.CreateScriptService;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
+import javafx.stage.Stage;
 import org.apache.log4j.Logger;
 import org.controlsfx.control.MaskerPane;
 import org.controlsfx.control.Notifications;
@@ -36,6 +41,10 @@ public class CreateScriptController {
 
     @Autowired
     private RootLayoutController root;
+    @Autowired
+    private VarChangerLogController logController;
+
+    private Stage changerLogStage;
 
     @FXML
     private StackPane stackPane;
@@ -191,6 +200,9 @@ public class CreateScriptController {
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
+
+                            if (root.getScriptConfig().isDisplayLog())
+                                displayVarChangerLog();
                         }
                     }
                 } else {
@@ -209,6 +221,25 @@ public class CreateScriptController {
         };
         Thread lightScanThread = new Thread(task);
         lightScanThread.start();
+    }
+
+    private void displayVarChangerLog() {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/VarChangerLog.fxml"));
+        loader.setController(logController);
+        try {
+            AnchorPane changerLog = loader.load();
+//            VarChangerLogController controller = loader.getController();
+            changerLogStage = new Stage();
+            changerLogStage.setTitle("Variable Changer log");
+            changerLogStage.getIcons().add(new Image(VerifClientApplication.class.getResourceAsStream("/outline_menu_book_white_18dp.png")));
+            changerLogStage.initModality(Modality.WINDOW_MODAL);
+            changerLogStage.initOwner(application.getPrimaryStage());
+            Scene scene = new Scene(changerLog);
+            changerLogStage.setScene(scene);
+            changerLogStage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -268,6 +299,9 @@ public class CreateScriptController {
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
+
+                            if (root.getScriptConfig().isDisplayLog())
+                                displayVarChangerLog();
                         }
                     }
                 } else {

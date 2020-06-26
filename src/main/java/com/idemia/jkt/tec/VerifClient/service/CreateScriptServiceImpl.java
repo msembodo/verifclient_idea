@@ -64,6 +64,7 @@ public class CreateScriptServiceImpl implements CreateScriptService {
             defaultSettings.setFileSystemXml(SAVEFS_PATH_DEFAULT);
             defaultSettings.setDestinationFolder(PROJECT_PATH_DEFAULT);
             defaultSettings.setUseVarChanger(false);
+            defaultSettings.setDisplayLog(true);
             defaultSettings.setDfList(DF_LIST);
             ObjectMapper mapper = new ObjectMapper();
             try {
@@ -111,30 +112,33 @@ public class CreateScriptServiceImpl implements CreateScriptService {
         // syntax: changer <script> <variables> <savefs> [<mode>]
         String varChangerExe = "changer_module_v3.exe";
         String script = getScriptName(light);
-        String variables = root.getVerifConfig().getPathToVariablesTxt();
 
-        // due to some weird varchanger behavior we need to copy savefs xml to VC directory (and will delete again)
-        File savefs1 = new File(root.getScriptConfig().getFileSystemXml());
-        Path savefsPath = Paths.get(root.getScriptConfig().getFileSystemXml());
-        File savefs2 = new File(System.getProperty("user.dir") + "\\" + savefsPath.getFileName().toString());
-        try {
-            Files.copy(savefs1.toPath(), savefs2.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        // due to some weird varchanger behavior we need to copy necessary files to VC directory (and delete again)
+        Path localScript = copyToUserDir(script);
+        Path localVariables = copyToUserDir(root.getVerifConfig().getPathToVariablesTxt());
+        Path localSavefs = copyToUserDir(root.getScriptConfig().getFileSystemXml());
 
 //        String dfList = root.getScriptConfig().getDfList().replace(";", ""); // filter semicolon
         if (light)
-            runShellCommand(varChangerExe, script, variables, savefsPath.getFileName().toString(), false);
+            runShellCommand(
+                    varChangerExe,
+                    Paths.get(script).getFileName().toString(),
+                    Paths.get(root.getVerifConfig().getPathToVariablesTxt()).getFileName().toString(),
+                    Paths.get(root.getScriptConfig().getFileSystemXml()).getFileName().toString(),
+                    false
+            );
         else
-            runShellCommand(varChangerExe, script, variables, savefsPath.getFileName().toString(), true);
+            runShellCommand(
+                    varChangerExe,
+                    Paths.get(script).getFileName().toString(),
+                    Paths.get(root.getVerifConfig().getPathToVariablesTxt()).getFileName().toString(),
+                    Paths.get(root.getScriptConfig().getFileSystemXml()).getFileName().toString(),
+                    true
+            );
 
-        // delete savefs XML from VC directory
-        try {
-            Files.deleteIfExists(savefs2.toPath());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        deleteLocalCopy(localScript);
+        deleteLocalCopy(localVariables);
+        deleteLocalCopy(localSavefs);
 
         // define possible error codes
         if (exitVal == 0)
@@ -143,6 +147,26 @@ public class CreateScriptServiceImpl implements CreateScriptService {
             return new VarChangerResponse(false, "Variables with same values are found");
         else
             return new VarChangerResponse(false, "(Error not defined)");
+    }
+
+    private Path copyToUserDir(String sourcePath) {
+        File source = new File(sourcePath);
+        File userCopy = new File(System.getProperty("user.dir") + "\\" + Paths.get(sourcePath).getFileName().toString());
+        try {
+            Files.copy(source.toPath(), userCopy.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            return userCopy.toPath();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private void deleteLocalCopy(Path localCopy) {
+        try {
+            Files.deleteIfExists(localCopy);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private String doGet(String uri) throws Exception {
@@ -198,17 +222,19 @@ public class CreateScriptServiceImpl implements CreateScriptService {
 
     @Override
     public String getScriptName(boolean lightMode) {
+        String inputFile = Paths.get(root.getScriptConfig().getFileSystemXml()).getFileName().toString();
+        final String substring = inputFile.substring(0, inputFile.length() - 4);
         if (lightMode) {
             if (root.getScriptConfig().isUseSaveFS()) {
-                String inputFile = root.getScriptConfig().getFileSystemXml();
-                return inputFile.substring(0, inputFile.length() - 4) + "__light.pcom";
+                String outFile = substring + "__light.pcom";
+                return root.getScriptConfig().getDestinationFolder() + "\\" + outFile;
             } else
                 return "script__light.pcom";
         }
         else {
             if (root.getScriptConfig().isUseSaveFS()) {
-                String inputFile = root.getScriptConfig().getFileSystemXml();
-                return inputFile.substring(0, inputFile.length() - 4) + "__full.pcom";
+                String outFile = substring + "__full.pcom";
+                return root.getScriptConfig().getDestinationFolder() + "\\" + outFile;
             } else
                 return "script__full.pcom";
         }
@@ -217,8 +243,9 @@ public class CreateScriptServiceImpl implements CreateScriptService {
     @Override
     public String getLscScript() {
         if (root.getScriptConfig().isUseSaveFS()) {
-            String inputFile = root.getScriptConfig().getFileSystemXml();
-            return inputFile.substring(0, inputFile.length() - 4) + ".lsc";
+            String inputFile = Paths.get(root.getScriptConfig().getFileSystemXml()).getFileName().toString();
+            String outFile = inputFile.substring(0, inputFile.length() - 4) + ".lsc";
+            return root.getScriptConfig().getDestinationFolder() + "\\" + outFile;
         } else
             return "script.lsc";
     }

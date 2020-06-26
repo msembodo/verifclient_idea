@@ -1,3 +1,8 @@
+v0.1.2:
+Author: Martyono Sembodo
+* Minor bug fixes on variable changer caller module.
+* Options to show variable changer log.
+
 v0.1.1:
 Author: Martyono Sembodo
 * Automatic DF memory allocation size in generated non-regression script.

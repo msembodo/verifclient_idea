@@ -8,15 +8,17 @@ public class CreateScriptConfig {
     private String fileSystemXml;
     private String destinationFolder;
     private boolean useVarChanger;
+    private boolean displayLog;
     private String dfList;
 
     public CreateScriptConfig() {}
 
-    public CreateScriptConfig(boolean useSaveFS, String fileSystemXml, String destinationFolder, boolean useVarChanger, String dfList) {
+    public CreateScriptConfig(boolean useSaveFS, String fileSystemXml, String destinationFolder, boolean useVarChanger, boolean displayLog, String dfList) {
         this.useSaveFS = useSaveFS;
         this.fileSystemXml = fileSystemXml;
         this.destinationFolder = destinationFolder;
         this.useVarChanger = useVarChanger;
+        this.displayLog = displayLog;
         this.dfList = dfList;
     }
 
@@ -50,6 +52,14 @@ public class CreateScriptConfig {
 
     public void setUseVarChanger(boolean useVarChanger) {
         this.useVarChanger = useVarChanger;
+    }
+
+    public boolean isDisplayLog() {
+        return displayLog;
+    }
+
+    public void setDisplayLog(boolean displayLog) {
+        this.displayLog = displayLog;
     }
 
     public String getDfList() {

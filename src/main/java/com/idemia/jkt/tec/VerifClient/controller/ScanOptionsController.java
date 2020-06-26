@@ -20,6 +20,8 @@ public class ScanOptionsController {
     @FXML
     private CheckBox chkActivateVarChanger;
     @FXML
+    private CheckBox chkDisplayLog;
+    @FXML
     private Label lblDFList;
     @FXML
     private TextField txtDFList;
@@ -33,11 +35,19 @@ public class ScanOptionsController {
     @FXML
     private void initialize() {
         chkActivateVarChanger.setSelected(root.getScriptConfig().isUseVarChanger());
+        chkDisplayLog.setSelected(root.getScriptConfig().isDisplayLog());
         txtDFList.setText(root.getScriptConfig().getDfList());
         txtDFList.setTooltip(new Tooltip("amount of available memory will be replaced with XX..XX for DF in the list"));
 
         lblDFList.setDisable(true);
         txtDFList.setDisable(true); // disabled by default
+
+        if (chkActivateVarChanger.isSelected()) chkDisplayLog.setDisable(false);
+        else chkDisplayLog.setDisable(true);
+        chkActivateVarChanger.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (chkActivateVarChanger.isSelected()) chkDisplayLog.setDisable(false);
+            else chkDisplayLog.setDisable(true);
+        });
 
         // update on varchanger module v3 is to select DFs from SaveFS XML
 //        if (chkActivateVarChanger.isSelected()) {
@@ -60,6 +70,7 @@ public class ScanOptionsController {
     @FXML
     public void handleButtonSave() {
         root.getScriptConfig().setUseVarChanger(chkActivateVarChanger.isSelected());
+        root.getScriptConfig().setDisplayLog(chkDisplayLog.isSelected());
         root.getScriptConfig().setDfList(txtDFList.getText());
         application.getScanOptionStage().close();
     }
