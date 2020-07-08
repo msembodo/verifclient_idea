@@ -10,16 +10,21 @@ public class CreateScriptConfig {
     private boolean useVarChanger;
     private boolean displayLog;
     private String dfList;
+    private boolean allowExOtReadHeader;
+    private boolean auditOsLocks;
 
     public CreateScriptConfig() {}
 
-    public CreateScriptConfig(boolean useSaveFS, String fileSystemXml, String destinationFolder, boolean useVarChanger, boolean displayLog, String dfList) {
+    public CreateScriptConfig(boolean useSaveFS, String fileSystemXml, String destinationFolder, boolean useVarChanger,
+                              boolean displayLog, String dfList, boolean allowExOtReadHeader, boolean auditOsLocks) {
         this.useSaveFS = useSaveFS;
         this.fileSystemXml = fileSystemXml;
         this.destinationFolder = destinationFolder;
         this.useVarChanger = useVarChanger;
         this.displayLog = displayLog;
         this.dfList = dfList;
+        this.allowExOtReadHeader = allowExOtReadHeader;
+        this.auditOsLocks = auditOsLocks;
     }
 
     public boolean isUseSaveFS() {
@@ -68,6 +73,22 @@ public class CreateScriptConfig {
 
     public void setDfList(String dfList) {
         this.dfList = dfList;
+    }
+
+    public boolean isAllowExOtReadHeader() {
+        return allowExOtReadHeader;
+    }
+
+    public void setAllowExOtReadHeader(boolean allowExOtReadHeader) {
+        this.allowExOtReadHeader = allowExOtReadHeader;
+    }
+
+    public boolean isAuditOsLocks() {
+        return auditOsLocks;
+    }
+
+    public void setAuditOsLocks(boolean auditOsLocks) {
+        this.auditOsLocks = auditOsLocks;
     }
 
     // for debugging

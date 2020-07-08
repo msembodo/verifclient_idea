@@ -65,7 +65,9 @@ public class CreateScriptServiceImpl implements CreateScriptService {
             defaultSettings.setDestinationFolder(PROJECT_PATH_DEFAULT);
             defaultSettings.setUseVarChanger(false);
             defaultSettings.setDisplayLog(true);
-            defaultSettings.setDfList(DF_LIST);
+            defaultSettings.setDfList(DF_LIST); // not applicable anymore; set to not visible instead
+            defaultSettings.setAllowExOtReadHeader(true);
+            defaultSettings.setAuditOsLocks(true);
             ObjectMapper mapper = new ObjectMapper();
             try {
                 mapper.writerWithDefaultPrettyPrinter().writeValue(scriptSettingsFile, defaultSettings);

@@ -18,6 +18,10 @@ public class ScanOptionsController {
     private RootLayoutController root;
 
     @FXML
+    private CheckBox chkAllowExOtReadHeader;
+    @FXML
+    private CheckBox chkAuditOsLocks;
+    @FXML
     private CheckBox chkActivateVarChanger;
     @FXML
     private CheckBox chkDisplayLog;
@@ -34,6 +38,8 @@ public class ScanOptionsController {
 
     @FXML
     private void initialize() {
+        chkAllowExOtReadHeader.setSelected(root.getScriptConfig().isAllowExOtReadHeader());
+        chkAuditOsLocks.setSelected(root.getScriptConfig().isAuditOsLocks());
         chkActivateVarChanger.setSelected(root.getScriptConfig().isUseVarChanger());
         chkDisplayLog.setSelected(root.getScriptConfig().isDisplayLog());
         txtDFList.setText(root.getScriptConfig().getDfList());
@@ -69,6 +75,8 @@ public class ScanOptionsController {
 
     @FXML
     public void handleButtonSave() {
+        root.getScriptConfig().setAllowExOtReadHeader(chkAllowExOtReadHeader.isSelected());
+        root.getScriptConfig().setAuditOsLocks(chkAuditOsLocks.isSelected());
         root.getScriptConfig().setUseVarChanger(chkActivateVarChanger.isSelected());
         root.getScriptConfig().setDisplayLog(chkDisplayLog.isSelected());
         root.getScriptConfig().setDfList(txtDFList.getText());
